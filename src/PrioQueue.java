@@ -1,16 +1,16 @@
 import java.util.*;
 
 public class PrioQueue {
-    public List<Tree> liveNode = new LinkedList<Tree>(); 
+    public List<Puzzle> liveNode = new LinkedList<Puzzle>(); 
 
-    public void enQueue(Tree puzzle) {
+    public void enQueue(Puzzle puzzle) {
         if (liveNode.isEmpty()) {
             liveNode.add(puzzle);
         } else {
             int i = 0;
             boolean found = false;
-            for (Tree elmt : liveNode) {
-                if (elmt.node.getCost() > puzzle.node.getCost()) {
+            for (Puzzle elmt : liveNode) {
+                if (elmt.getCost() > puzzle.getCost()) {
                     found = true;
                     break;
                 } else {
@@ -25,8 +25,8 @@ public class PrioQueue {
         }
     }
 
-    public Tree deQueue() {
-        Tree out = liveNode.get(0);
+    public Puzzle deQueue() {
+        Puzzle out = liveNode.get(0);
         liveNode.remove(0);
         return out;
     }

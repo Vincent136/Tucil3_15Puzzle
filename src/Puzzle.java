@@ -1,7 +1,8 @@
 import java.io.*;
-import java.util.Scanner;
+import java.util.*;
 
 public class Puzzle {
+    public long id;
     public int[][] matrix = new int[4][4];
     private int row = 4;
     private int col = 4;
@@ -10,8 +11,9 @@ public class Puzzle {
     private int cost;
     private int level;
     public String prevCommand;
+    public Puzzle parent;
     
-    public Puzzle(String filename){
+    public Puzzle(String filename, long counter){
         try {
             File file = new File(filename);
 
@@ -35,13 +37,13 @@ public class Puzzle {
             this.cost = level + GX;
 
             this.prevCommand = "-";
-
+            this.id = counter;
             input.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-    public Puzzle(Puzzle p, String command){
+    public Puzzle(Puzzle p, String command, long counter){
         if (command.equals("up")) {
             for(int i = 0; i < row; i++) {
                 for (int j = 0; j < col; j++) {
@@ -106,9 +108,11 @@ public class Puzzle {
             this.col16--;
             this.prevCommand = "left";
         }
+        this.parent = p;
+        this.id = counter;
         this.level = p.level+1;
         int GX = getGX();
-        this.cost = this.level + GX;
+        this.cost = GX;
     }
 
     public boolean checkPossible() {
@@ -152,6 +156,23 @@ public class Puzzle {
 
     public boolean checkLeft() {
         return col16 != 0 && !prevCommand.equals("right");
+    }
+
+    public boolean checkState(List<Puzzle> state) {
+        for (Puzzle p : state) {
+            boolean isSame = true;
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if (p.matrix[i][j] != this.matrix[i][j]) {
+                        isSame = false;
+                    }
+                }
+            }
+            if (isSame) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public int getGX() {
