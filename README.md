@@ -11,8 +11,7 @@ Java Development Kit 8 (JDK 8)
 ## Cara Menjalankan Program
 Requirement: Java Development Kit (JDK) 8
 1. masukkan puzzle yang ingin diselesaikan dalam file text pada folder test.
-Contoh isi file test1.txt:
-
+<br> Contoh isi file test1.txt:<br>
 1 3 4 15 
 <br>
 2 16 5 12
@@ -21,7 +20,7 @@ Contoh isi file test1.txt:
 <br>
 8 9 10 13
 <br>
-2. Jalankan Puzzle15_13520136.jar pada folder bin. (klik kanan pada .jar -> open with... -> Java(TM) Platform SE Binary)
+1. Jalankan Puzzle15_13520136.jar pada folder bin. (klik kanan pada .jar -> open with... -> Java(TM) Platform SE Binary)
 <br>
 3. Alternatif kedua untuk menjalankan program adalah dengan menjalankan command <code> java -jar Puzzle15_13520136.jar </code> pada command prompt pada folder bin.<br>
 4. Masukkan nama file pada textbox yagn tersedia.<br>
