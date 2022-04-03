@@ -1,7 +1,12 @@
 import java.io.*;
 import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 public class Puzzle {
+
+    // atribut Puzzle
     public long id;
     public int[][] matrix = new int[4][4];
     private int row = 4;
@@ -12,18 +17,21 @@ public class Puzzle {
     private int level;
     public String prevCommand;
     public Puzzle parent;
-    
+    public boolean isEmpty = false;
+
+    // ctor Puzzle dengan input string filename dan counter (counter merupakan variable global untuk menghitung jumlah living node)
     public Puzzle(String filename, long counter){
+
+        String content = null;
         try {
-            File file = new File(filename);
+            content = Files.lines(Paths.get("../test/"+ filename))
+                    .collect(Collectors.joining(System.lineSeparator()));
+            String[] splitLine = content.split("\r\n");
 
-            Scanner input = new Scanner(file);
-
-            for (int i = 0; i < row; i++) {
-                String line = input.nextLine();
-                String[] arrLine = line.split(" ");
-                for (int j = 0; j < arrLine.length; j++) {
-                    int number =Integer.parseInt(arrLine[j]);
+            for (int i = 0; i < 4; i++) {
+                String[] spaceSplit = splitLine[i].split(" ");
+                for (int j = 0; j < 4; j++) {
+                    int number =Integer.parseInt(spaceSplit[j]);
                     if (number == 16) {
                         this.row16 = i;
                         this.col16 = j;
@@ -38,11 +46,13 @@ public class Puzzle {
 
             this.prevCommand = "-";
             this.id = counter;
-            input.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+
+        } catch (IOException e) {
+            this.isEmpty = true;
         }
     }
+
+    // ctor Puzzle dengan input puzzle parent dan command ("up","down","right","left") dan counter (counter merupakan variable global untuk menghitung jumlah living node)
     public Puzzle(Puzzle p, String command, long counter){
         if (command.equals("up")) {
             for(int i = 0; i < row; i++) {
@@ -115,7 +125,8 @@ public class Puzzle {
         this.cost = GX;
     }
 
-    public boolean checkPossible() {
+    // fungsi untuk mengetahui apakah puzzle bisa diselesaikan parameter outputkurang merupakan list dari kurang(i)
+    public boolean checkPossible(List<Integer> outputKurang) {
         boolean Possible = true;
         int sigma = 0;
         for(int i = 0; i < row; i++) {
@@ -123,41 +134,50 @@ public class Puzzle {
                 int numberNow = matrix[i][j];
                 int k = i;
                 int l = j + 1;
+                int kurang = 0;
                 while (k < row) {
                     if (l == col) {
                         l = 0;
                         k++;
-                    } 
+                    }
                     if (k < row) {
                         if (matrix[k][l] < numberNow) {
-                            sigma += 1;
+                            kurang += 1;
                         }
                         l++;
                     }
                 }
+                outputKurang.set(numberNow-1, kurang);
+                sigma += kurang;
             }
         }
-        int X = (row16 + col16)%2;      
+        int X = (row16 + col16)%2;
         Possible = ((sigma + X)%2) == 0;
+        outputKurang.set(16, sigma + X);
         return Possible;
     }
 
+    // fungsi mengecek apakah kotak kosong bisa digerakan ke atas
     public boolean checkUp() {
         return row16 != 0 && !prevCommand.equals("down");
     }
 
+    // fungsi mengecek apakah kotak kosong bisa digerakan ke kanan
     public boolean checkRight() {
         return col16 != 3 && !prevCommand.equals("left");
     }
 
+    // fungsi mengecek apakah kotak kosong bisa digerakan ke bawah
     public boolean checkDown() {
         return row16 != 3 && !prevCommand.equals("up");
     }
 
+    // fungsi mengecek apakah kotak kosong bisa digerakan ke kiri
     public boolean checkLeft() {
         return col16 != 0 && !prevCommand.equals("right");
     }
 
+    // Fungsi untuk mengecek apakah bentuk matrix sudah pernah di check
     public boolean checkState(List<Puzzle> state) {
         for (Puzzle p : state) {
             boolean isSame = true;
@@ -175,6 +195,7 @@ public class Puzzle {
         return true;
     }
 
+    // fungsi untuk mendapatkan g(x) saat menentukan cost
     public int getGX() {
         int GX = 0;
         for (int i = 0; i < row; i++) {
@@ -182,28 +203,31 @@ public class Puzzle {
                 if (matrix[i][j] != 16) {
                     if (matrix[i][j] != i*4 + j + 1) {
                         GX++;
-                    } 
+                    }
                 }
-            }   
+            }
         }
         return GX;
     }
 
+    // fungsi untuk mengecek apakah matrix sudah merupakan goal
     public boolean checkGoal() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 if (matrix[i][j] != i*4 + j + 1) {
                     return false;
                 }
-            }   
+            }
         }
         return true;
     }
 
+    // getter untuk mendapatkan cost dari puzzle
     public int getCost() {
         return this.cost;
     }
 
+    // fungsi untuk print puzzle pada cli (tidak digunakan dalam GUI)
     public void printPuzzle() {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
@@ -212,7 +236,7 @@ public class Puzzle {
                 } else {
                     System.out.print("- ");
                 }
-            }   
+            }
             System.out.println();
         }
     }

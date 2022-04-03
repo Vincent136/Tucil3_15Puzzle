@@ -1,8 +1,11 @@
 import java.util.*;
 
+// kelas prioqueue digunakan untuk menyimpan living node pada pencarian branch & bound
 public class PrioQueue {
-    public List<Puzzle> liveNode = new LinkedList<Puzzle>(); 
+    // attribute
+    public List<Puzzle> liveNode = new LinkedList<Puzzle>();
 
+    // fungsi untuk memasukan puzzle ke dalam Prioqueue sesuai dengan prioritas (cost terkecil akan masuk pada index terendah)
     public void enQueue(Puzzle puzzle) {
         if (liveNode.isEmpty()) {
             liveNode.add(puzzle);
@@ -25,9 +28,11 @@ public class PrioQueue {
         }
     }
 
+    // fungsi untuk mengambil puzzle pada index terendah dari prioqueue
     public Puzzle deQueue() {
         Puzzle out = liveNode.get(0);
         liveNode.remove(0);
         return out;
     }
 }
+
